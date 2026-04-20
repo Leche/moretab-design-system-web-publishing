@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=393, initial-scale=1.0" />
+<!-- 디자인 폭 393px(iPhone 15/16 Pro 기준). initial-scale을 두지 않으면 브라우저가
+     layout viewport(393px)를 실제 device-width에 맞춰 자동 스케일 (375/390/402/430 등 모두 fit). -->
+<meta name="viewport" content="width=393, user-scalable=yes, viewport-fit=cover" />
 <title>더보기탭 - 발견 피드</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="stylesheet" as="style" crossorigin
