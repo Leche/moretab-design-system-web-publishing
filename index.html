@@ -6,7 +6,7 @@
      393px(iPhone 15 Pro)은 네이티브, 그보다 넓거나 좁은 디바이스에서는 카드가 가로로 확장/수축.
      viewport-fit=cover: 노치/홈 인디케이터 영역까지 화면 사용 + env(safe-area-inset-*) 활성화 */ -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>더보기탭 - 발견 피드</title>
+<title>더보기탭</title>
 
 <!-- ===== PWA / Add to Home Screen 설정 =====
      사파리에서 "공유 → 홈 화면에 추가" 후 홈 아이콘으로 열면 standalone 모드(사파리 UI 없음)로 실행됨.
@@ -67,6 +67,7 @@
     color: var(--gray900);
     display: flex;
     justify-content: center;
+    padding-bottom: 49px; /* tab-bar 높이 — 콘텐츠가 고정 탭바 아래로 가지 않도록 */
   }
 
   .device {
@@ -254,7 +255,7 @@
   .feed {
     position: relative;
     z-index: 5;
-    padding: 0 0 49px;
+    padding: 0 0 20px; /* 마지막 요소 아래 시각적 여백 20px만 */
   }
 
   /* ===== Share row (info+share) — Figma 1321:3799 =====
@@ -307,7 +308,7 @@
      node 1321:3723 등 — 16px radius, white bg, subtle border.
      Fluid width: 화면 폭에서 좌우 16px 마진을 뺀 만큼 가로로 늘어남 (393px 디자인 기준 폭은 361px). */
   .card {
-    margin: 0 16px 12px;
+    margin: 0 16px;
     background: #ffffff;
     border: 1px solid var(--card-border);
     border-radius: 16px;
@@ -486,7 +487,7 @@
      Border radius 16px, light 4% border */
   .card-news {
     aspect-ratio: 1 / 1;
-    margin: 0 16px 12px;
+    margin: 0 16px;
     border: 1px solid var(--card-border);
     border-radius: 16px;
     overflow: hidden;
@@ -497,8 +498,7 @@
     align-items: stretch;
     color: #ffffff;
   }
-  /* 20px gap between any card-news placed last (right before tab-bar) and the tabs */
-  main > .card-news:last-child { margin-bottom: 20px; }
+  /* 마지막 카드 하단 여백은 .feed padding-bottom 20px + body padding-bottom 49px으로 처리 */
   .card-news > .cn-bg {
     position: absolute;
     inset: 0;
@@ -788,19 +788,17 @@
   @media all and (display-mode: standalone) {
     .top { padding-top: env(safe-area-inset-top, 0px); }
     .tab-bar { padding-bottom: env(safe-area-inset-bottom, 0px); }
-    .feed {
-      /* .top이 sticky로 flow에 있어 top padding 불필요. bottom만 safe-area 추가 */
+    body {
       padding-bottom: calc(49px + env(safe-area-inset-bottom, 0px));
     }
     .bg-gradient {
-      /* .top 높이가 104 + safe-top으로 확장되므로 bg-gradient도 맞춰 내림 */
       top: calc(104px + env(safe-area-inset-top, 0px));
       bottom: calc(49px + env(safe-area-inset-bottom, 0px));
     }
   }
   html[data-standalone="true"] .top { padding-top: env(safe-area-inset-top, 0px); }
   html[data-standalone="true"] .tab-bar { padding-bottom: env(safe-area-inset-bottom, 0px); }
-  html[data-standalone="true"] .feed {
+  html[data-standalone="true"] body {
     padding-bottom: calc(49px + env(safe-area-inset-bottom, 0px));
   }
   html[data-standalone="true"] .bg-gradient {
@@ -881,6 +879,8 @@
      ===================================================================== */
   .screen { display: none; }
   .screen.is-active { display: block; }
+  .screen-feed { padding-top: 6px; }
+  .screen-feed.is-active { display: flex; flex-direction: column; gap: 12px; }
 
   /* =====================================================================
      ===== SCREEN: HOME (홈 칩 선택 시) ===================================
@@ -889,7 +889,7 @@
      ===================================================================== */
   .screen-home {
     display: none;  /* default off; overridden by .is-active below */
-    padding: 16px 16px 12px;   /* top 16 → chip-bar ↔ pay-strip 간격 확보 */
+    padding: 6px 16px 0;
     flex-direction: column;
     gap: 12px;                  /* 섹션 간 gap 12 */
   }
@@ -957,7 +957,7 @@
      white bg rounded 10, padding top/left/right 12, bottom 16 (요청 반영). */
   .service-shortcut {
     background: #ffffff;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 12px 12px 16px;
     display: flex; flex-direction: column;
     gap: 8px;
@@ -965,13 +965,19 @@
   }
   /* Service Shortcut: 가로 스와이프 3페이지 + 인디케이터
      .service-pages: overflow-x scroll-snap 컨테이너
-     .service-page: 각 페이지 = 4x3 grid */
+     .service-page: 각 페이지 = 4x3 grid
+     iOS 26 스와이프 강도 맞춤:
+       - scroll-behavior 컨테이너 제거 → 터치 이벤트는 OS 네이티브 물리엔진 직접 사용
+         (dot 클릭 smooth는 JS scrollTo({ behavior:'smooth' })가 별도 처리)
+       - overscroll-behavior-x: contain → 부모로 스크롤 체인 차단, 앱과 동일한 경계감
+       - touch-action: pan-x → 수평 스와이프 전용 힌트로 응답 지연(300ms) 제거 */
   .service-pages {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
     scrollbar-width: none;
     width: 100%;
   }
@@ -1139,23 +1145,25 @@
      18px bold, color #191919, padding 12/6 */
   .home-subtitle {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     color: #191919;
     line-height: 1.22;
-    padding: 12px 6px 8px;
+    padding: 18px 0 15px;
     letter-spacing: -0.3px;
   }
 
   /* --- 5) Game Play (Figma 4781:31742, 415 tall) --- */
   .game-card {
     background: #ffffff;
-    border-radius: 10px;
-    padding: 16px;
+    border-radius: 12px;
+    padding: 16px 0;
     border: 1px solid rgba(0, 0, 0, 0.04);
+    overflow: hidden;
   }
   .game-banner {
     display: flex; align-items: center; gap: 6px;
-    font-size: 13px; color: #191919;
+    font-size: 14px; color: #191919;
+    padding: 0 16px;
     margin-bottom: 16px;
   }
   .game-banner-ico {
@@ -1164,14 +1172,33 @@
   }
   .game-banner-ico img { width: 100%; height: 100%; display: block; }
   .game-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 18px;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 16px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    scrollbar-width: none;
+    gap: 0;
+    margin-bottom: 16px;
   }
-  .game-item { min-width: 0; }
+  .game-list::-webkit-scrollbar { display: none; }
+  .game-list-spacer {
+    flex: none;
+    width: 16px;
+    display: block;
+  }
+  .game-item {
+    flex: 0 0 156px;
+    scroll-snap-align: start;
+    min-width: 0;
+    margin-right: 10px;
+  }
+  .game-item:last-child { margin-right: 0; }
   .game-thumb {
-    aspect-ratio: 1/1;
+    width: 156px;
+    height: 156px;
     border-radius: 8px;
     position: relative;
     overflow: hidden;
@@ -1179,31 +1206,51 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
   }
   .game-thumb.t1 { background-image: url('images/home/game_thumb_1.png'); }
   .game-thumb.t2 { background-image: url('images/home/game_thumb_2.png'); }
   .game-thumb.t3 { background-image: url('images/home/game_thumb_3.png'); }
+  .game-badge {
+    position: absolute;
+    top: 5.5px; left: 5.5px;
+    background: #f4551e;
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.1px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    line-height: 1.4;
+  }
   .game-title {
-    font-size: 13px; font-weight: 500;
+    font-size: 15px; font-weight: 600;
     color: #191919;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     letter-spacing: -0.2px;
   }
   .game-play-count {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 12px; color: #767676;
+    display: flex; align-items: center; gap: 3px;
+    font-size: 13px; color: #767676;
     letter-spacing: -0.2px;
   }
   .game-play-count img { width: 12px; height: 12px; flex: none; display: block; }
   .game-divider {
     height: 1px;
     background: rgba(0, 0, 0, 0.06);
-    margin: 0 0 6px;
+    margin: 0 16px 16px;
+  }
+  .game-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px;
   }
   .game-stat {
     display: flex; align-items: center; gap: 6px;
-    padding: 6px 0;
   }
   .game-stat-ico { width: 22px; height: 22px; flex: none; }
   .game-stat-ico img { width: 100%; height: 100%; display: block; }
@@ -1214,7 +1261,8 @@
   }
   .game-stat-value img { width: 10px; height: 16px; display: block; }
 
-  /* --- 6) 카카오 나우 (Figma 6541:26335, 6 cards 3x2) — PNG 3x 자산 사용 --- */
+  /* --- 6) 카카오 나우 (Figma 6541:26335, 6 cards 3x2)
+     border: 0.5px inset overlay rgba(0,0,0,0.08), radius 12px */
   .kakaonow-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1223,11 +1271,20 @@
   .kakaonow-card {
     position: relative;
     aspect-ratio: 175/204;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+  }
+  /* inset border overlay — overflow:hidden 안에서도 테두리 표시 */
+  .kakaonow-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    pointer-events: none;
   }
   .kakaonow-card.k1 { background-image: url('images/home/kakaonow_1.png'); }
   .kakaonow-card.k2 { background-image: url('images/home/kakaonow_2.png'); }
@@ -1236,17 +1293,108 @@
   .kakaonow-card.k5 { background-image: url('images/home/kakaonow_5.png'); }
   .kakaonow-card.k6 { background-image: url('images/home/kakaonow_6.png'); }
 
-  /* --- 7) Weather (Figma 5775:3010) — PNG 3x 풀 카드 이미지 --- */
+  /* --- 7) Weather (Figma 5775:3010 — HTML 구현)
+     Container: white bg, radius 12, shadow 0 0.5px 4px rgba(0,0,0,0.02)
+     padding 16, flex row items-center gap 16
+     좌(날씨): flex col gap 9 / 우(위치버튼): 28×28 */
   .weather-card {
     background: #ffffff;
-    border-radius: 10px;
-    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 0.5px 4px 0 rgba(0, 0, 0, 0.02);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  /* 날씨 좌측 영역 */
+  .wc-info {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  /* 위치명 — Pretendard SemiBold 12, #191919 */
+  .wc-location {
+    font-size: 12px;
+    font-weight: 600;
+    color: #191919;
+    line-height: normal;
+    white-space: nowrap;
+  }
+  /* 날씨정보 행 */
+  .wc-weather-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  /* 현재 날씨: 아이콘(36×36) + 기온(32px) — Figma 5775:3015 */
+  .wc-current {
+    position: relative;
+    width: 89px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+  .wc-ico {
+    position: absolute;
+    left: 0;
+    top: 1px;
+    width: 36px;
+    height: 36px;
     display: block;
   }
-  .weather-card img {
+  .wc-temp {
+    position: absolute;
+    left: 41px;
+    top: 0;
+    font-size: 32px;
+    font-weight: 400;
+    color: #191919;
+    line-height: normal;
+    white-space: nowrap;
+  }
+  /* 날씨설명 — Pretendard Medium 12, 절대배치 3줄 — Figma 5775:3023 */
+  .wc-desc {
+    position: relative;
+    width: 103px;
+    height: 38px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .wc-desc-line1,
+  .wc-desc-dust,
+  .wc-desc-level { position: absolute; margin: 0; line-height: normal; }
+  .wc-desc-line1  { left: 0;    top: calc(50% - 16px); color: #191919; }
+  .wc-desc-dust   { left: 0;    top: calc(50% + 1px);  color: rgba(25, 25, 25, 0.6); }
+  .wc-desc-level  { left: 47px; top: calc(50% + 1px);  color: #f4551e; }
+  /* 위치 변경 버튼 (Figma 5775:3027) — 28×28, Oval2 bg + location icon */
+  .wc-loc-btn {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
     display: block;
-    width: 100%;
-    height: auto;
+  }
+  .wc-loc-oval {
+    position: absolute;
+    inset: 0;
+    width: 28px;
+    height: 28px;
+    display: block;
+  }
+  .wc-loc-ico {
+    position: absolute;
+    left: 6.5px;
+    top: 6.5px;
+    width: 15px;
+    height: 15px;
+    display: block;
   }
 
   /* --- 8) Local AD (Figma 6541:26493) — PNG 3x 풀 카드 이미지 --- */
@@ -1286,10 +1434,10 @@
 
       <!-- Top Chip - XLarge (피그마 1321:3715) -->
       <div class="chip-bar">
-        <div class="chip"><span class="chip-txt">홈</span></div>
+        <div class="chip active"><span class="chip-txt">홈</span></div>
         <div class="chip"><span class="chip-txt">지갑</span></div>
         <div class="chip"><span class="chip-txt">게임</span></div>
-        <div class="chip active"><span class="chip-txt">발견</span></div>
+        <div class="chip"><span class="chip-txt">발견</span></div>
       </div>
     </header>
 
@@ -1298,7 +1446,7 @@
       <!-- ===================================================================
            SCREEN: FEED (발견 칩 선택 시) — 기존 콘텐츠를 screen 컨테이너로 wrap
            =================================================================== -->
-      <section class="screen screen-feed is-active" data-screen="feed">
+      <section class="screen screen-feed" data-screen="feed">
 
       <!-- 1) card_news_01 — 프로젝트 헤일메리 -->
       <section class="card-news variant1">
@@ -1681,303 +1829,10 @@
       <!-- ===================================================================
            SCREEN: HOME (홈 칩 선택 시) — Figma 3982:180303 기반
            =================================================================== -->
-      <section class="screen screen-home" data-screen="home">
-
-        <!-- 1) Pay Strip (Figma Pay_Component 3982:180344 — 1:1 구현) -->
-        <div class="pay-strip" role="group" aria-label="카카오페이 요약">
-          <div class="pay-left">
-            <span class="pay-logo" aria-label="카카오페이">
-              <img src="icons/home/pay_logo.png" alt="pay" />
-            </span>
-            <span class="pay-amount">53,000원</span>
-          </div>
-          <div class="pay-btns">
-            <span>송금</span>
-            <span class="divider" aria-hidden="true"></span>
-            <span>자산</span>
-            <span class="divider" aria-hidden="true"></span>
-            <span>
-              <img class="pay-ico" src="icons/home/ico_pay_barcode.png" alt="" aria-hidden="true" />
-              결제
-            </span>
-          </div>
-        </div>
-
-        <!-- 2) Service Shortcut — 3페이지 가로 스와이프 캐러셀
-             페이지 1: 기존 12셀 / 페이지 2: Figma 5813:22374 / 페이지 3: Figma 5813:22396 -->
-        <div class="service-shortcut" aria-label="서비스 바로가기">
-          <div class="service-pages" id="servicePages" role="region" aria-label="서비스 페이지" tabindex="0">
-            <!-- ===== Page 1 ===== -->
-            <div class="service-page" data-page="0" aria-label="페이지 1/3">
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_gift.png" alt="" width="38" height="38" aria-hidden="true" />
-                  <span class="dot-badge" aria-hidden="true"></span>
-                </span>
-                <span class="service-label">선물하기</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_received.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">받은선물</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_tokdeal.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">톡딜</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_emoticon.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">이모티콘</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_live.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">라이브쇼핑</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_makers.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">메이커스</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_friends.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">프렌즈</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_game.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">게임</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_idcard.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">모바일신분증</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_talkcloud.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">톡클라우드</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_calendar.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">캘린더</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon">
-                  <img src="icons/home/svc_reservation.png" alt="" width="38" height="38" aria-hidden="true" />
-                </span>
-                <span class="service-label">예약하기</span>
-              </div>
-            </div>
-            <!-- ===== Page 2 (Figma 5813:22374) ===== -->
-            <div class="service-page" data-page="1" aria-label="페이지 2/3">
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_order.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">주문하기</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_simplepurchase.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">간편구매</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_map.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오맵</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_together.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">같이가치</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_fashion.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">브랜드패션</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_mail.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">메일</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_story.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오스토리</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_brunch.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">브런치</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_webtoon.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오웹툰</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_page.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">페이지</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_receipt.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카드영수증</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_bank.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오뱅크</span>
-              </div>
-            </div>
-            <!-- ===== Page 3 (Figma 5813:22396) — 7셀 + 5 empty ===== -->
-            <div class="service-page" data-page="2" aria-label="페이지 3/3">
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_melon.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">멜론</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_melonticket.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">멜론티켓</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_golf.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">골프예약</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_pasta.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">파스타</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_kakaot.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오 T</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_kakaonavi.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오내비</span>
-              </div>
-              <div class="service-cell">
-                <span class="service-icon"><img src="icons/home/svc_kakaobus.png" alt="" width="38" height="38" aria-hidden="true" /></span>
-                <span class="service-label">카카오버스</span>
-              </div>
-              <div class="service-cell empty" aria-hidden="true"></div>
-              <div class="service-cell empty" aria-hidden="true"></div>
-              <div class="service-cell empty" aria-hidden="true"></div>
-              <div class="service-cell empty" aria-hidden="true"></div>
-              <div class="service-cell empty" aria-hidden="true"></div>
-            </div>
-          </div>
-          <!-- 페이지 인디케이터 (Figma 3986:1028) -->
-          <div class="service-indicator" role="tablist" aria-label="페이지 인디케이터">
-            <span class="dot active" role="tab" aria-selected="true" data-goto="0"></span>
-            <span class="dot" role="tab" aria-selected="false" data-goto="1"></span>
-            <span class="dot" role="tab" aria-selected="false" data-goto="2"></span>
-          </div>
-        </div>
-
-        <!-- 3) AD 배너 (Figma 5074:20173 - AOS / Moretab / AD)
-             361x226 카드. 이미지 영역 inset 0/0/45/0, 하단 45px에 타이틀 + CTA 절대배치.
-             AD 뱃지 22x15 pill, top-right 8px (이미지 위 오버레이). -->
-        <div class="home-ad" aria-label="광고">
-          <div class="home-ad-img">
-            <img class="home-ad-hero" src="images/home/ad_nike_golf.png" alt="나이키 골프 Collection" />
-          </div>
-          <span class="home-ad-badge" aria-label="광고 표시">AD</span>
-          <div class="home-ad-title">나이키 골프 Collection</div>
-          <button type="button" class="home-ad-cta">바로가기</button>
-        </div>
-
-        <!-- 4) Game Play 섹션 -->
-        <div>
-          <div class="home-subtitle">게임플레이</div>
-          <div class="game-card">
-            <div class="game-banner">
-              <span class="game-banner-ico" aria-hidden="true">
-                <img src="icons/home/ico_game_banner.png" alt="" />
-              </span>
-              <span>게임하며 모으는 쇼핑포인트! <strong style="font-weight:700">게임플레이 OPEN</strong></span>
-            </div>
-            <div class="game-list">
-              <div class="game-item">
-                <div class="game-thumb t1" role="img" aria-label="쬬르디 구출 대작전 썸네일"></div>
-                <div class="game-title">쬬르디 구출 대작전</div>
-                <div class="game-play-count">
-                  <img src="icons/home/ico_playcount.png" alt="" aria-hidden="true" />
-                  130만 플레이
-                </div>
-              </div>
-              <div class="game-item">
-                <div class="game-thumb t2" role="img" aria-label="쬬르디 퍼즐탐험 썸네일"></div>
-                <div class="game-title">쬬르디 퍼즐탐험</div>
-                <div class="game-play-count">
-                  <img src="icons/home/ico_playcount.png" alt="" aria-hidden="true" />
-                  80만 플레이
-                </div>
-              </div>
-              <div class="game-item">
-                <div class="game-thumb t3" role="img" aria-label="쬬르디 쌍둥이 찾기 썸네일"></div>
-                <div class="game-title">쬬르디 쌍둥이 찾기</div>
-                <div class="game-play-count">
-                  <img src="icons/home/ico_playcount.png" alt="" aria-hidden="true" />
-                  110만 플레이
-                </div>
-              </div>
-            </div>
-
-            <div class="game-divider"></div>
-
-            <div class="game-stat">
-              <span class="game-stat-ico" aria-hidden="true">
-                <img src="icons/home/ico_ranking.png" alt="" />
-              </span>
-              <span class="game-stat-label">이번주 나의 랭킹</span>
-              <span class="game-stat-value">
-                23위
-                <img src="icons/home/ico_arrow.png" alt="" aria-hidden="true" />
-              </span>
-            </div>
-            <div class="game-stat">
-              <span class="game-stat-ico" aria-hidden="true">
-                <img src="icons/home/ico_point.png" alt="" />
-              </span>
-              <span class="game-stat-label">이번 달 나의 쇼핑포인트</span>
-              <span class="game-stat-value">
-                5,123P
-                <img src="icons/home/ico_arrow.png" alt="" aria-hidden="true" />
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 5) 카카오 나우 섹션 — PNG 3x 자산 -->
-        <div>
-          <div class="home-subtitle">카카오 나우</div>
-          <div class="kakaonow-grid">
-            <div class="kakaonow-card k1" role="img" aria-label="카카오나우 카드 1"></div>
-            <div class="kakaonow-card k2" role="img" aria-label="카카오나우 카드 2"></div>
-            <div class="kakaonow-card k3" role="img" aria-label="카카오나우 카드 3"></div>
-            <div class="kakaonow-card k4" role="img" aria-label="카카오나우 카드 4"></div>
-            <div class="kakaonow-card k5" role="img" aria-label="카카오나우 카드 5"></div>
-            <div class="kakaonow-card k6" role="img" aria-label="카카오나우 카드 6"></div>
-          </div>
-        </div>
-
-        <!-- 6) Weather — PNG 3x 풀 카드 이미지 -->
-        <div class="weather-card">
-          <img src="images/home/weather_card.png" alt="성남시 백현동 날씨: 18°, 어제보다 2°C 높음, 미세먼지 나쁨" />
-        </div>
-
-        <!-- 7) Local AD — PNG 3x 풀 카드 이미지 -->
-        <div class="local-ad">
-          <img src="images/home/local_ad_card.png" alt="삼평동 주변 호텔 — 호텔 스카이파크 센트럴 서울 판교, 경기 성남시 분당구 판교역로 152" />
-        </div>
-
+      <section class="screen screen-home is-active" data-screen="home" id="homeScreen">
+      <!-- 홈 화면 컴포넌트는 JS가 렌더링합니다. HOME_COMPONENTS 배열에서 데이터를 수정하세요. -->
       </section>
-      <!-- /screen-home -->
+            <!-- /screen-home -->
 
     </main>
 
@@ -2015,10 +1870,393 @@
   </div>
 
   <script>
+    /* ================================================================
+     * HOME SCREEN — 컴포넌트 시스템
+     * ================================================================
+     * 목적: 홈 화면 UI를 컴포넌트 단위로 구조화해 AI 협업 및
+     *       디자인 시스템 맥락 전달의 정확성·효율성을 높임.
+     *
+     * 사용법:
+     *   1) HOME_COMPONENTS 배열에서 컴포넌트 순서·데이터 수정
+     *   2) HomeComponents 객체에서 각 컴포넌트 렌더 함수 정의
+     *   3) 새 컴포넌트 추가: HomeComponents에 render 함수 추가 후
+     *      HOME_COMPONENTS 배열에 { type, props } 항목 삽입
+     * ================================================================ */
+
+    /* ── 컴포넌트 데이터 설정 ──────────────────────────────────────
+       HOME_COMPONENTS 배열 순서 = 화면 렌더 순서.
+       type: HomeComponents의 키 이름과 일치해야 함.
+       props: 각 컴포넌트 render 함수의 인자.             */
+    var HOME_COMPONENTS = [
+
+      /* ① PayStrip — Figma Pay_Component 3982:180344 */
+      {
+        type: 'PayStrip',
+        props: {
+          amount: '53,000원',
+          buttons: [
+            { label: '송금' },
+            { label: '자산' },
+            { label: '결제', icon: 'icons/home/ico_pay_barcode.png' }
+          ]
+        }
+      },
+
+      /* ② ServiceShortcut — Figma 3986:1009 (3 pages × 12 cells) */
+      {
+        type: 'ServiceShortcut',
+        props: {
+          pages: [
+            {
+              ariaLabel: '페이지 1/3',
+              cells: [
+                { icon: 'icons/home/svc_gift.png',        label: '선물하기',    badge: true },
+                { icon: 'icons/home/svc_received.png',    label: '받은선물' },
+                { icon: 'icons/home/svc_tokdeal.png',     label: '톡딜' },
+                { icon: 'icons/home/svc_emoticon.png',    label: '이모티콘' },
+                { icon: 'icons/home/svc_live.png',        label: '라이브쇼핑' },
+                { icon: 'icons/home/svc_makers.png',      label: '메이커스' },
+                { icon: 'icons/home/svc_friends.png',     label: '프렌즈' },
+                { icon: 'icons/home/svc_game.png',        label: '게임' },
+                { icon: 'icons/home/svc_idcard.png',      label: '모바일신분증' },
+                { icon: 'icons/home/svc_talkcloud.png',   label: '톡클라우드' },
+                { icon: 'icons/home/svc_calendar.png',    label: '캘린더' },
+                { icon: 'icons/home/svc_reservation.png', label: '예약하기' }
+              ]
+            },
+            {
+              ariaLabel: '페이지 2/3',
+              cells: [
+                { icon: 'icons/home/svc_order.png',        label: '주문하기' },
+                { icon: 'icons/home/svc_simplepurchase.png',label: '간편구매' },
+                { icon: 'icons/home/svc_map.png',          label: '카카오맵' },
+                { icon: 'icons/home/svc_together.png',     label: '같이가치' },
+                { icon: 'icons/home/svc_fashion.png',      label: '브랜드패션' },
+                { icon: 'icons/home/svc_mail.png',         label: '메일' },
+                { icon: 'icons/home/svc_story.png',        label: '카카오스토리' },
+                { icon: 'icons/home/svc_brunch.png',       label: '브런치' },
+                { icon: 'icons/home/svc_webtoon.png',      label: '카카오웹툰' },
+                { icon: 'icons/home/svc_page.png',         label: '페이지' },
+                { icon: 'icons/home/svc_receipt.png',      label: '카드영수증' },
+                { icon: 'icons/home/svc_bank.png',         label: '카카오뱅크' }
+              ]
+            },
+            {
+              ariaLabel: '페이지 3/3',
+              cells: [
+                { icon: 'icons/home/svc_melon.png',      label: '멜론' },
+                { icon: 'icons/home/svc_melonticket.png',label: '멜론티켓' },
+                { icon: 'icons/home/svc_golf.png',       label: '골프예약' },
+                { icon: 'icons/home/svc_pasta.png',      label: '파스타' },
+                { icon: 'icons/home/svc_kakaot.png',     label: '카카오 T' },
+                { icon: 'icons/home/svc_kakaonavi.png',  label: '카카오내비' },
+                { icon: 'icons/home/svc_kakaobus.png',   label: '카카오버스' }
+              ],
+              emptyCount: 5
+            }
+          ]
+        }
+      },
+
+      /* ③ HomeAd — Figma 5074:20173 (AOS / Moretab / AD) */
+      {
+        type: 'HomeAd',
+        props: {
+          image:    'images/home/ad_nike_golf.png',
+          imageAlt: '나이키 골프 Collection',
+          title:    '나이키 골프 Collection',
+          ctaLabel: '바로가기'
+        }
+      },
+
+      /* ④ GamePlay — Figma 4781:31742 */
+      {
+        type: 'GamePlay',
+        props: {
+          title: '게임플레이',
+          banner: {
+            icon:      'icons/home/ico_game_banner.png',
+            text:      '게임하며 모으는 쇼핑포인트!',
+            highlight: '게임플레이 OPEN'
+          },
+          games: [
+            { thumbClass: 't1', title: '쬬르디 구출 대작전',  playCount: '130만 플레이', playcountIcon: 'icons/home/ico_playcount.svg', badge: 'NEW' },
+            { thumbClass: 't2', title: '쬬르디 퍼즐탐험',      playCount: '80만 플레이',  playcountIcon: 'icons/home/ico_playcount.svg' },
+            { thumbClass: 't3', title: '쬬르디 쌍둥이 찾기',  playCount: '110만 플레이', playcountIcon: 'icons/home/ico_playcount.svg' }
+          ],
+          stats: [
+            { icon: 'icons/home/ico_ranking.png', label: '이번주 나의 랭킹',        value: '23위',    arrowIcon: 'icons/home/ico_arrow.png' },
+            { icon: 'icons/home/ico_point.png',   label: '이번 달 나의 쇼핑포인트', value: '5,123P',  arrowIcon: 'icons/home/ico_arrow.png' }
+          ]
+        }
+      },
+
+      /* ⑤ KakaoNow — Figma 6541:26335 (3×2 grid) */
+      {
+        type: 'KakaoNow',
+        props: {
+          title: '카카오 나우',
+          cards: [
+            { image: 'images/home/kakaonow_1.png', ariaLabel: '카카오나우 카드 1' },
+            { image: 'images/home/kakaonow_2.png', ariaLabel: '카카오나우 카드 2' },
+            { image: 'images/home/kakaonow_3.png', ariaLabel: '카카오나우 카드 3' },
+            { image: 'images/home/kakaonow_4.png', ariaLabel: '카카오나우 카드 4' },
+            { image: 'images/home/kakaonow_5.png', ariaLabel: '카카오나우 카드 5' },
+            { image: 'images/home/kakaonow_6.png', ariaLabel: '카카오나우 카드 6' }
+          ]
+        }
+      },
+
+      /* ⑥ WeatherCard — Figma 5775:3010 (HTML 구현) */
+      {
+        type: 'WeatherCard',
+        props: {
+          location:    '성남시 백현동',
+          temp:        '18°',
+          tempIcon:    'icons/home/ico_weather_sun.svg',
+          description: '어제보다 2°C 높아요.',
+          dustLabel:   '미세먼지',
+          dustLevel:   '나쁨',
+          locOvalIcon: 'icons/home/ico_weather_loc_oval.svg',
+          locIcon:     'icons/home/ico_weather_loc.svg'
+        }
+      },
+
+      /* ⑦ LocalAd — Figma 6541:26493 */
+      {
+        type: 'LocalAd',
+        props: {
+          image: 'images/home/local_ad_card.png',
+          alt:   '삼평동 주변 호텔 — 호텔 스카이파크 센트럴 서울 판교, 경기 성남시 분당구 판교역로 152'
+        }
+      }
+
+    ]; // END HOME_COMPONENTS
+
+
+    /* ── 컴포넌트 렌더 함수 ────────────────────────────────────────
+       각 함수는 props 객체를 받아 HTML 문자열을 반환.
+       CSS는 기존 <style> 블록의 컴포넌트별 규칙을 그대로 사용.  */
+    var HomeComponents = {
+
+      /* ① PayStrip
+         Spec: bg #fee500, radius 12, padding 18, justify-between
+         좌: pay_logo(40×14) + amount(Bold 15)
+         우: buttons(Medium 14), 구분선 0.5×13 */
+      PayStrip: function (p) {
+        var btns = p.buttons.map(function (b, i) {
+          var divider = i > 0 ? '<span class="divider" aria-hidden="true"></span>' : '';
+          var icon = b.icon
+            ? '<img class="pay-ico" src="' + b.icon + '" alt="" aria-hidden="true" />'
+            : '';
+          return divider + '<span>' + icon + b.label + '</span>';
+        }).join('');
+        return (
+          '<div class="pay-strip" role="group" aria-label="카카오페이 요약">' +
+            '<div class="pay-left">' +
+              '<span class="pay-logo" aria-label="카카오페이">' +
+                '<img src="icons/home/pay_logo.png" alt="pay" />' +
+              '</span>' +
+              '<span class="pay-amount">' + p.amount + '</span>' +
+            '</div>' +
+            '<div class="pay-btns">' + btns + '</div>' +
+          '</div>'
+        );
+      },
+
+      /* ② ServiceShortcut
+         Spec: white bg, radius 10, padding 12/12/16, flex column gap 8
+         pages: 4×3 grid scroll-snap, indicator 3dots */
+      ServiceShortcut: function (p) {
+        var pagesHtml = p.pages.map(function (page, pi) {
+          var cellsHtml = page.cells.map(function (c) {
+            var badge = c.badge ? '<span class="dot-badge" aria-hidden="true"></span>' : '';
+            return (
+              '<div class="service-cell">' +
+                '<span class="service-icon">' +
+                  '<img src="' + c.icon + '" alt="" width="38" height="38" aria-hidden="true" />' +
+                  badge +
+                '</span>' +
+                '<span class="service-label">' + c.label + '</span>' +
+              '</div>'
+            );
+          }).join('');
+          var emptyHtml = '';
+          if (page.emptyCount) {
+            for (var e = 0; e < page.emptyCount; e++) {
+              emptyHtml += '<div class="service-cell empty" aria-hidden="true"></div>';
+            }
+          }
+          return (
+            '<div class="service-page" data-page="' + pi + '" aria-label="' + page.ariaLabel + '">' +
+              cellsHtml + emptyHtml +
+            '</div>'
+          );
+        }).join('');
+        return (
+          '<div class="service-shortcut" aria-label="서비스 바로가기">' +
+            '<div class="service-pages" id="servicePages" role="region" aria-label="서비스 페이지" tabindex="0">' +
+              pagesHtml +
+            '</div>' +
+            '<div class="service-indicator" role="tablist" aria-label="페이지 인디케이터">' +
+              '<span class="dot active" role="tab" aria-selected="true"  data-goto="0"></span>' +
+              '<span class="dot"        role="tab" aria-selected="false" data-goto="1"></span>' +
+              '<span class="dot"        role="tab" aria-selected="false" data-goto="2"></span>' +
+            '</div>' +
+          '</div>'
+        );
+      },
+
+      /* ③ HomeAd
+         Spec: aspect-ratio 361/226, radius 12, shadow 0 0.5px 4px rgba(0,0,0,0.02)
+         img area: inset 0 0 45px 0 / AD badge top-right 8px
+         title bottom-left 10/13, CTA button bottom-right 10px */
+      HomeAd: function (p) {
+        return (
+          '<div class="home-ad" aria-label="광고">' +
+            '<div class="home-ad-img">' +
+              '<img class="home-ad-hero" src="' + p.image + '" alt="' + p.imageAlt + '" />' +
+            '</div>' +
+            '<span class="home-ad-badge" aria-label="광고 표시">AD</span>' +
+            '<div class="home-ad-title">' + p.title + '</div>' +
+            '<button type="button" class="home-ad-cta">' + p.ctaLabel + '</button>' +
+          '</div>'
+        );
+      },
+
+      /* ④ GamePlay
+         Spec: white bg, radius 10, padding 16, border rgba(0,0,0,0.04)
+         banner(22px icon + text), game-list 3col grid, divider, stat rows */
+      GamePlay: function (p) {
+        var gamesHtml = p.games.map(function (g, i) {
+          var badgeHtml = g.badge ? '<span class="game-badge">' + g.badge + '</span>' : '';
+          var isFirst = i === 0;
+          var isLast  = i === p.games.length - 1;
+          var ml = isFirst ? ' style="margin-left:16px' + (isLast ? ';margin-right:16px' : '') + '"' : (isLast ? ' style="margin-right:16px"' : '');
+          return (
+            '<div class="game-item"' + ml + '>' +
+              '<div class="game-thumb ' + g.thumbClass + '" role="img" aria-label="' + g.title + ' 썸네일">' +
+                badgeHtml +
+              '</div>' +
+              '<div class="game-title">' + g.title + '</div>' +
+              '<div class="game-play-count">' +
+                '<img src="' + g.playcountIcon + '" alt="" aria-hidden="true" />' +
+                g.playCount +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+        var statsHtml = p.stats.map(function (s) {
+          return (
+            '<div class="game-stat">' +
+              '<span class="game-stat-ico" aria-hidden="true"><img src="' + s.icon + '" alt="" /></span>' +
+              '<span class="game-stat-label">' + s.label + '</span>' +
+              '<span class="game-stat-value">' +
+                s.value +
+                '<img src="' + s.arrowIcon + '" alt="" aria-hidden="true" />' +
+              '</span>' +
+            '</div>'
+          );
+        }).join('');
+        return (
+          '<div>' +
+            '<div class="home-subtitle">' + p.title + '</div>' +
+            '<div class="game-card">' +
+              '<div class="game-banner">' +
+                '<span class="game-banner-ico" aria-hidden="true"><img src="' + p.banner.icon + '" alt="" /></span>' +
+                '<span>' + p.banner.text + ' ' + p.banner.highlight + '</span>' +
+              '</div>' +
+              '<div class="game-list">' + gamesHtml + '</div>' +
+              '<div class="game-divider"></div>' +
+              '<div class="game-stats">' + statsHtml + '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      },
+
+      /* ⑤ KakaoNow
+         Spec: 2-col grid gap 11, card aspect-ratio 175/204, radius 10
+         PNG 3x 자산을 background-image로 사용 */
+      KakaoNow: function (p) {
+        var cardsHtml = p.cards.map(function (c, i) {
+          var style = "background-image:url('" + c.image + "')";
+          return (
+            '<div class="kakaonow-card" style="' + style + '" role="img" aria-label="' + c.ariaLabel + '"></div>'
+          );
+        }).join('');
+        return (
+          '<div>' +
+            '<div class="home-subtitle">' + p.title + '</div>' +
+            '<div class="kakaonow-grid">' + cardsHtml + '</div>' +
+          '</div>'
+        );
+      },
+
+      /* ⑥ WeatherCard — Figma 5775:3010 HTML 구현
+         Container: white bg, radius 12, shadow, padding 16, flex row
+         좌: wc-info(위치명 + 날씨행) / 우: wc-loc-btn(28×28) */
+      WeatherCard: function (p) {
+        return (
+          '<div class="weather-card">' +
+            '<div class="wc-info">' +
+              '<div class="wc-location">' + p.location + '</div>' +
+              '<div class="wc-weather-row">' +
+                '<div class="wc-current">' +
+                  '<img class="wc-ico" src="' + p.tempIcon + '" alt="" aria-hidden="true" />' +
+                  '<span class="wc-temp">' + p.temp + '</span>' +
+                '</div>' +
+                '<div class="wc-desc">' +
+                  '<p class="wc-desc-line1">' + p.description + '</p>' +
+                  '<p class="wc-desc-dust">' + p.dustLabel + '</p>' +
+                  '<p class="wc-desc-level">' + p.dustLevel + '</p>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<button type="button" class="wc-loc-btn" aria-label="위치 변경">' +
+              '<img class="wc-loc-oval" src="' + p.locOvalIcon + '" alt="" aria-hidden="true" />' +
+              '<img class="wc-loc-ico" src="' + p.locIcon + '" alt="" aria-hidden="true" />' +
+            '</button>' +
+          '</div>'
+        );
+      },
+
+      /* ⑦ LocalAd
+         Spec: white bg, radius 10, PNG 3x 풀 카드 이미지 */
+      LocalAd: function (p) {
+        return (
+          '<div class="local-ad">' +
+            '<img src="' + p.image + '" alt="' + p.alt + '" />' +
+          '</div>'
+        );
+      }
+
+    }; // END HomeComponents
+
+
+    /* ── 렌더링 실행 ─────────────────────────────────────────────
+       HOME_COMPONENTS 배열을 순회하며 각 컴포넌트를 #homeScreen에 주입.
+       이 스크립트 블록은 기존 carousel/scroll JS보다 먼저 실행되어
+       #servicePages, .service-indicator 등 DOM이 미리 준비됨.   */
+    (function () {
+      var el = document.getElementById('homeScreen');
+      if (!el) return;
+      el.innerHTML = HOME_COMPONENTS.map(function (item) {
+        var render = HomeComponents[item.type];
+        if (!render) {
+          console.warn('[HomeComponents] Unknown type:', item.type);
+          return '';
+        }
+        return render(item.props);
+      }).join('\n');
+    })();
+  </script>
+
+  <script>
     /* 칩 클릭 → 화면 전환 (홈 ↔ 발견)
        - chip-bar의 각 .chip에 data-screen을 부여하고 클릭 시 해당 .screen[data-screen=...]을 활성화.
        - 현재 구현된 화면: '홈', '발견'. 지갑/게임은 자리만 잡아두고 클릭해도 화면 전환은 하지 않음.
-       - 전환 시 스크롤 최상단으로 리셋하고, .top 의 is-hidden 상태도 초기화. */
+       - 전환 시 스크롤 최상단으로 리셋하고, .top 의 is-hidden 상태도 초기화.
+       - activate()를 window.MoreTab에 노출 → 더보기 탭 클릭 �핸들러에서 재사용. */
     (function () {
       var chips = document.querySelectorAll('.chip-bar .chip');
       if (!chips.length) return;
@@ -2061,6 +2299,36 @@
           if (chip.classList.contains('active')) return; // 이미 활성화된 칩은 스킵
           activate(key);
         });
+      });
+
+      // activate() 외부 노출 — 더보기 탭 클릭 핸들러에서 사용
+      window.MoreTab = window.MoreTab || {};
+      window.MoreTab.activate = activate;
+      window.MoreTab.getActiveScreen = function () {
+        var active = document.querySelector('.screen.is-active');
+        return active ? active.getAttribute('data-screen') : null;
+      };
+    })();
+
+    /* 더보기 탭 클릭 인터랙션
+       - 스크롤 중(scrollY > 0) : 최상단으로 smooth 스크롤
+       - 이미 최상단(scrollY === 0) : 홈↔발견 칩 스위칭 */
+    (function () {
+      var moreTab = document.querySelector('.tab.more');
+      if (!moreTab) return;
+
+      moreTab.addEventListener('click', function () {
+        if ((window.scrollY || window.pageYOffset || 0) > 0) {
+          // 스크롤 위치가 있으면 최상단으로 이동
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // 이미 최상단이면 홈↔발견 토글
+          var mt = window.MoreTab;
+          if (!mt) return;
+          var current = mt.getActiveScreen();
+          var next = current === 'home' ? 'feed' : 'home';
+          mt.activate(next);
+        }
       });
     })();
 
