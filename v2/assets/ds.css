@@ -233,12 +233,11 @@ body.is-no-sidebar .ds-footer {
 }
 .ds-page-title {
   font-size: 36px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--ds-text);
   margin-bottom: 14px;
   line-height: 1.25;
-  text-transform: uppercase;
 }
 .ds-page-desc {
   font-size: 17px;
