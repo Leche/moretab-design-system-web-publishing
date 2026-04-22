@@ -117,7 +117,6 @@ p { margin: 0; }
 .ds-header-brand .ds-brand-mark svg { display: block; }
 .ds-header-brand .ds-brand-wordmark {
   font-family: 'Gotham Black', 'Gotham', 'Helvetica Neue', Arial, sans-serif;
-  font-weight: 900;
   font-size: 17px;
   letter-spacing: -0.25px;
   text-transform: uppercase;
