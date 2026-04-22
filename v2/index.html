@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="assets/ds.css?v=21" />
-  <script defer src="assets/ds.js?v=21"></script>
+  <link rel="stylesheet" href="assets/ds.css?v=22" />
+  <script defer src="assets/ds.js?v=22"></script>
 </head>
 <body data-page="home" data-root="">
   <main class="ds-main">
@@ -14,7 +14,7 @@
       <section class="ds-hero">
         <h1 class="ds-hero-title">더보기탭 디자인 시스템</h1>
         <p class="ds-hero-desc">
-          카카오톡 <strong>더보기탭</strong> 지면에 사용되는 디자인 토큰과 컴포넌트, 그리고
+          카카오톡 더보기탭 지면에 사용되는 디자인 토큰과 컴포넌트, 그리고
           이들을 조합해 화면을 구성하는 패턴을 문서화한 페이지입니다. 일관된 시각 언어와
           재사용 가능한 구조로 더 빠르고 정교한 화면 설계를 돕습니다.
         </p>
@@ -27,49 +27,49 @@
       </section>
 
       <section class="ds-section">
-        <h2 class="ds-section-title">카테고리</h2>
-        <p class="ds-section-desc">
-          Foundation에서 기본 토큰을, Components에서 실제 UI 블록을, Patterns에서 화면 단위의 구성 방식을 확인할 수 있습니다.
-        </p>
         <div class="ds-category-grid">
           <a class="ds-category-card" href="foundation/color.html">
-            <div class="cat-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 3C7 3 3 6.7 3 11.5c0 2.8 1.9 4.5 4.1 4.5 1 0 1.5-.6 1.5-1.4 0-.4-.2-.7-.2-1.1 0-.9.8-1.6 1.7-1.6H12c3.6 0 6.5-2.3 6.5-5.3S15.5 3 12 3z"/>
-                <circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/>
-                <circle cx="12" cy="6.2" r="1.1" fill="currentColor" stroke="none"/>
-                <circle cx="16" cy="8.5" r="1.1" fill="currentColor" stroke="none"/>
-                <circle cx="16.5" cy="12.5" r="1.1" fill="currentColor" stroke="none"/>
-              </svg>
-            </div>
-            <h3>Foundation</h3>
-            <p>색상, 타이포그래피, 스페이싱, 아이콘 등 디자인의 기본 단위.</p>
-            <div class="cat-items">Color · Typography · Spacing · Icon</div>
+            <span class="cat-thumb" aria-hidden="true">
+              <span class="cat-stage">
+                <span class="cat-shape" style="width:48px;height:48px;border-radius:4px;transform:matrix(1,0,-0.5,0.866025,159,95);background:rgba(10,115,220,0.8);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);"></span>
+                <span class="cat-shape" style="width:48px;height:48px;border-radius:4px;transform:matrix(1,0,-0.5,0.866025,143,79);background:rgba(10,115,220,0.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);"></span>
+                <span class="cat-shape" style="width:48px;height:48px;border-radius:4px;transform:matrix(1,0,-0.5,0.866025,127,63);background:rgba(10,115,220,0.2);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);"></span>
+              </span>
+            </span>
+            <span class="cat-intro">
+              <h3>Foundation</h3>
+              <p>색상·타이포·스페이싱·아이콘처럼 화면이 공유하는 디자인의 최소 단위를 토큰으로 정의합니다.</p>
+            </span>
           </a>
           <a class="ds-category-card" href="components/overview.html">
-            <div class="cat-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="8" height="8" rx="2"/>
-                <rect x="13" y="3" width="8" height="8" rx="2"/>
-                <rect x="3" y="13" width="8" height="8" rx="2"/>
-                <rect x="13" y="13" width="8" height="8" rx="2"/>
-              </svg>
-            </div>
-            <h3>Components</h3>
-            <p>칩, 카드, 쇼트컷, 탭바 등 더보기탭에 쓰이는 UI 컴포넌트.</p>
-            <div class="cat-items">10개 컴포넌트</div>
+            <span class="cat-thumb" aria-hidden="true">
+              <span class="cat-stage">
+                <span class="cat-shape" style="width:64px;height:90.667px;border-radius:4px;transform:matrix(1,0,-0.5,0.866025,154.192,63.4019);background:rgba(10,115,220,0.16);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);"></span>
+                <span class="cat-shape" style="width:20px;height:11px;border-radius:5.5px;transform:matrix(1,0,-0.5,0.866025,149.69,59);background:rgba(10,115,220,0.4);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);box-shadow:0 4px 8px rgba(10,115,220,0.2);"></span>
+                <span class="cat-shape" style="width:20px;height:11px;border-radius:5.5px;transform:matrix(1,0,-0.5,0.866025,171.691,59);background:rgba(10,115,220,0.2);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);box-shadow:0 2px 2px rgba(10,115,220,0.1);"></span>
+                <span class="cat-shape" style="width:60px;height:31px;border-radius:4px;transform:matrix(1,0,-0.5,0.866025,126.691,98.9808);background:rgba(10,115,220,0.4);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);box-shadow:0 10px 20px rgba(10,115,220,0.24);"></span>
+                <span class="cat-shape" style="width:60px;height:13px;border-radius:4px;transform:matrix(1,0,-0.5,0.866025,128.69,75.1243);background:rgba(10,115,220,0.8);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);box-shadow:0 10px 20px rgba(10,115,220,0.24);"></span>
+              </span>
+            </span>
+            <span class="cat-intro">
+              <h3>Components</h3>
+              <p>칩·카드·쇼트컷·탭바처럼 화면을 구성하는 재사용 가능한 UI 블록을 컴포넌트로 정의합니다.</p>
+            </span>
           </a>
           <a class="ds-category-card" href="patterns/app-shell.html">
-            <div class="cat-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="5" y="2.5" width="14" height="19" rx="2.5"/>
-                <line x1="5.5" y1="7" x2="18.5" y2="7"/>
-                <line x1="5.5" y1="17" x2="18.5" y2="17"/>
-              </svg>
-            </div>
-            <h3>Patterns</h3>
-            <p>컴포넌트를 조합한 화면 단위 구성 규칙과 레이아웃.</p>
-            <div class="cat-items">App Shell · Home Feed</div>
+            <span class="cat-thumb" aria-hidden="true">
+              <span class="cat-stage">
+                <span class="cat-shape" style="width:56px;height:94px;border-radius:3px;transform:matrix(1,0,-0.5,0.866025,153.804,63);background:rgba(10,115,220,0.16);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);"></span>
+                <span class="cat-shape" style="width:56px;height:10px;border-radius:3px;transform:matrix(1,0,-0.5,0.866025,144,56);background:rgba(10,115,220,0.2);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);"></span>
+                <span class="cat-shape" style="width:56px;height:24px;border-radius:3px;transform:matrix(1,0,-0.5,0.866025,137,68.1244);background:rgba(10,115,220,0.8);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);"></span>
+                <span class="cat-shape" style="width:56px;height:24px;border-radius:3px;transform:matrix(1,0,-0.5,0.866025,123,92.3731);background:rgba(10,115,220,0.4);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);"></span>
+                <span class="cat-shape" style="width:56px;height:24px;border-radius:3px;transform:matrix(1,0,-0.5,0.866025,109,116.622);background:rgba(10,115,220,0.2);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);"></span>
+              </span>
+            </span>
+            <span class="cat-intro">
+              <h3>Patterns</h3>
+              <p>앱 셸·홈 피드처럼 컴포넌트를 조합해 만드는 화면 단위의 구성 규칙을 패턴으로 정의합니다.</p>
+            </span>
           </a>
         </div>
       </section>

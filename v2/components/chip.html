@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chip — 더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="../assets/ds.css?v=21" />
-  <script defer src="../assets/ds.js?v=21"></script>
+  <link rel="stylesheet" href="../assets/ds.css?v=22" />
+  <script defer src="../assets/ds.js?v=22"></script>
   <style>
     .prv .chip-bar { display:flex; gap:6px; height:48px; align-items:flex-start; padding: 0 16px; background:#ffffff; }
     .prv .chip { height:38px; padding:10px 16px; border-radius:40px; display:inline-flex; align-items:center; justify-content:center; gap:4px; font-weight:600; font-size:15px; line-height:normal; text-align:center; background:#ffffff; color:#191919; border:1px solid rgba(0,0,0,0.14); white-space:nowrap; box-sizing:border-box; cursor:pointer; transition: background .15s, color .15s, border-color .15s; }
@@ -79,20 +79,22 @@
       </section>
 
       <section class="ds-section">
-        <h2 class="ds-section-title">Do / Don't</h2>
-        <div class="ds-subsection">
-          <h3 class="ds-subsection-title">Do</h3>
-          <ul style="padding-left:1.2em;line-height:1.8;color:var(--ds-text-sub)">
-            <li>칩 개수는 2–5개를 권장합니다. 그 이상은 가로 스크롤로 처리합니다.</li>
-            <li>레이블은 2–4자의 짧은 명사로 작성합니다. (예: 홈, 지갑, 쇼핑)</li>
-          </ul>
-        </div>
-        <div class="ds-subsection">
-          <h3 class="ds-subsection-title">Don't</h3>
-          <ul style="padding-left:1.2em;line-height:1.8;color:var(--ds-text-sub)">
-            <li>Active 상태를 포인트 컬러로 칠하지 않습니다. 강조는 대비로 만듭니다.</li>
-            <li>동일 화면에 칩 바를 2개 이상 사용하지 않습니다. 정보 위계가 모호해집니다.</li>
-          </ul>
+        <h2 class="ds-section-title">사용 가이드</h2>
+        <div class="ds-guide-grid">
+          <div class="ds-guide ds-guide--do">
+            <h3 class="ds-guide-title">Do</h3>
+            <ul class="ds-guide-list">
+              <li>칩 개수는 2–5개를 권장합니다. 그 이상은 가로 스크롤로 처리합니다.</li>
+              <li>레이블은 2–4자의 짧은 명사로 작성합니다. (예: 홈, 지갑, 쇼핑)</li>
+            </ul>
+          </div>
+          <div class="ds-guide ds-guide--dont">
+            <h3 class="ds-guide-title">Don't</h3>
+            <ul class="ds-guide-list">
+              <li>Active 상태를 포인트 컬러로 칠하지 않습니다. 강조는 대비로 만듭니다.</li>
+              <li>동일 화면에 칩 바를 2개 이상 사용하지 않습니다. 정보 위계가 모호해집니다.</li>
+            </ul>
+          </div>
         </div>
       </section>
 

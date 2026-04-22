@@ -4,17 +4,53 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>App Shell — 더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="../assets/ds.css?v=21" />
-  <script defer src="../assets/ds.js?v=21"></script>
+  <link rel="stylesheet" href="../assets/ds.css?v=22" />
+  <script defer src="../assets/ds.js?v=22"></script>
   <style>
-    .shell-demo { width:100%; max-width:380px; margin:0 auto; background:#fff; border:1px solid var(--ds-border); border-radius:24px; overflow:hidden; }
-    .shell-zone { padding:14px 16px; font-size:12px; font-family:'JetBrains Mono', monospace; color:#595959; }
-    .shell-zone .label { font-weight:700; color:#191919; font-size:13px; }
-    .shell-top { background:#f5f5f5; }
-    .shell-chip { background:#ebebeb; border-top: 1px dashed rgba(0,0,0,0.1); }
-    .shell-content { background:#f5f5f5; min-height:280px; padding:14px 16px; color:#767676; }
-    .shell-tabbar { background:#e6e6e6; border-top: 0.5px solid rgba(0,0,0,0.08); }
-    .z-badge { display:inline-block; padding:2px 6px; border-radius:4px; background:rgba(0,0,0,0.05); font-size:11px; margin-left:6px; color:#191919; }
+    .shell-demo {
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      overflow: hidden;
+      font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+    }
+    .shell-zone {
+      padding: 16px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #767676;
+      line-height: 1.5;
+    }
+    .shell-zone .label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #191919;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .shell-top { background: rgba(10, 115, 220, 0.05); }
+    .shell-chip { background: rgba(10, 115, 220, 0.09); }
+    .shell-content {
+      background: rgba(10, 115, 220, 0.03);
+      min-height: 280px;
+      padding: 20px;
+    }
+    .shell-tabbar { background: rgba(10, 115, 220, 0.09); }
+    .z-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(10, 115, 220, 0.12);
+      color: #0A73DC;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+      letter-spacing: -0.01em;
+    }
   </style>
 </head>
 <body data-page="patterns/app-shell" data-root="../">

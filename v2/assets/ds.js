@@ -164,12 +164,12 @@
     });
   });
 
-  // ----- Syntax highlighting (highlight.js, atom-one-dark) -----------------
+  // ----- Syntax highlighting (highlight.js, atom-one-light) ----------------
   (function loadHljs() {
     const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/';
     const themeLink = document.createElement('link');
     themeLink.rel = 'stylesheet';
-    themeLink.href = CDN + 'styles/atom-one-dark.min.css';
+    themeLink.href = CDN + 'styles/atom-one-light.min.css';
     document.head.appendChild(themeLink);
 
     const script = document.createElement('script');

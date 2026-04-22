@@ -4,27 +4,269 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Components — 더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="../assets/ds.css?v=21" />
-  <script defer src="../assets/ds.js?v=21"></script>
+  <link rel="stylesheet" href="../assets/ds.css?v=22" />
+  <script defer src="../assets/ds.js?v=22"></script>
   <style>
-    .comp-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-    .comp-card { border:1px solid var(--ds-border); border-radius:12px; overflow:hidden; background:#fff; transition: transform .2s, box-shadow .2s; display:block; }
-    .comp-card:hover { transform: translateY(-3px); box-shadow: 0 5px 16px rgba(0,0,0,0.06); }
-    .comp-thumb { height:140px; background:#f5f5f5; display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--ds-border); color:#999; font-size:12px; font-family:'JetBrains Mono', monospace; overflow:hidden; position:relative; }
-    .comp-thumb.img { background-size:cover; background-position:center; }
-    .comp-thumb.tone-nav { background:#fff; gap:16px; }
-    .comp-thumb.tone-nav img { width:28px; height:28px; }
-    .comp-thumb.tone-pay { background:#FEE500; gap:10px; flex-direction:row; }
-    .comp-thumb.tone-pay img { height:14px; width:auto; }
-    .comp-thumb.tone-svc { background:#fff; gap:12px; }
-    .comp-thumb.tone-svc img { width:38px; height:38px; }
-    .comp-thumb.tone-tab { background:#fff; gap:14px; }
-    .comp-thumb.tone-tab img { width:28px; height:28px; }
-    .comp-thumb.tone-weather { background:#fff; gap:10px; }
-    .comp-thumb.tone-weather img { width:44px; height:44px; }
-    .comp-body { padding:16px 18px 18px; }
-    .comp-body h3 { font-size:15px; font-weight:700; margin-bottom:4px; }
-    .comp-body p { font-size:13px; color:var(--ds-text-sub); line-height:1.55; }
+    .comp-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px 16px; }
+    .comp-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      transition: transform .2s ease;
+    }
+    .comp-card:hover { transform: translateY(-3px); }
+    .comp-card:hover .comp-thumb {
+      border-color: rgba(0, 0, 0, 0.14);
+      box-shadow: 0 5px 16px rgba(0,0,0,0.06);
+    }
+    .comp-thumb {
+      height: 150px;
+      background: #f5f6f7;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 16px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    /* Header mini */
+    .mini-header {
+      width: 224px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+      box-sizing: border-box;
+    }
+    .mini-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 12px;
+    }
+    .mini-header-title {
+      font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      color: #191919;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .mini-header-icons { display: flex; gap: 7px; align-items: center; }
+    .mini-header-icons span { width: 10px; height: 10px; background: rgba(0,0,0,0.08); border-radius: 50%; }
+    .mini-header-chips { display: flex; gap: 4px; }
+    .mini-header-chips span {
+      height: 17px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.08);
+    }
+    .mini-header-chips span.active { width: 26px; background: #191919; }
+    .mini-header-chips span.inactive { width: 30px; }
+
+    /* Chip mini */
+    .mini-chip-row { display: flex; gap: 8px; align-items: center; }
+    .mini-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 16px;
+      border-radius: 999px;
+      font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      box-sizing: border-box;
+    }
+    .mini-chip.active { background: #191919; color: #fff; }
+    .mini-chip.inactive { background: #fff; color: #191919; }
+
+    /* PayStrip mini */
+    .mini-pay {
+      width: 228px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+      box-sizing: border-box;
+    }
+    .mini-pay-logo { display: block; width: 34px; height: 11px; flex-shrink: 0; }
+    .mini-pay-bar {
+      width: 54px;
+      height: 12px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 2px;
+    }
+    .mini-pay-actions { display: flex; gap: 6px; margin-left: auto; align-items: center; }
+    .mini-pay-actions span { width: 16px; height: 12px; background: rgba(0,0,0,0.08); border-radius: 2px; }
+
+    /* ServiceShortcut mini */
+    .mini-svc {
+      width: 186px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+      box-sizing: border-box;
+    }
+    .mini-svc-row { display: flex; gap: 14px; }
+    .mini-svc-row span { width: 28px; height: 28px; background: #ebebeb; border-radius: 4px; }
+
+    /* HomeAd mini */
+    .mini-ad {
+      width: 200px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+    }
+    .mini-ad-hero { height: 64px; background: rgba(0,0,0,0.08); position: relative; }
+    .mini-ad-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 12px;
+      padding: 2px 3px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+      font-size: 8px;
+      font-weight: 800;
+      color: #191919;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      line-height: 1;
+    }
+    .mini-ad-body {
+      padding: 8px 10px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mini-ad-titles { flex: 1; }
+    .mini-ad-titles span { display: block; width: 120px; height: 12px; border-radius: 3px; background: rgba(0,0,0,0.08); }
+    .mini-ad-cta { width: 40px; height: 20px; background: rgba(0,0,0,0.08); border-radius: 4px; flex-shrink: 0; }
+
+    /* GameCard mini — match HomeAd outer size (200×102) */
+    .mini-game {
+      width: 200px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+      box-sizing: border-box;
+    }
+    .mini-game-banner {
+      width: 100%;
+      height: 26px;
+      background: rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+    .mini-game-banner-icon { width: 10px; height: 10px; background: #fff; border-radius: 50%; flex-shrink: 0; }
+    .mini-game-banner-text { flex: 1; height: 5px; background: #fff; border-radius: 2px; max-width: 110px; }
+    .mini-game-row {
+      display: flex;
+      gap: 8px;
+      padding: 8px 10px 10px;
+    }
+    .mini-game-item { flex: 1; aspect-ratio: 1; background: rgba(0,0,0,0.08); border-radius: 8px; }
+    .mini-game-item.active { background: #191919; }
+
+    /* KakaoNow mini — match HomeAd outer size (200×102) */
+    .mini-now {
+      width: 200px;
+      height: 102px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+      box-sizing: border-box;
+    }
+    .mini-now-cell { background: rgba(0,0,0,0.08); border-radius: 6px; }
+    .mini-now-cell.active { background: #191919; }
+
+    /* WeatherCard mini */
+    .mini-weather {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0.5px 4px rgba(0,0,0,0.02);
+    }
+    .mini-weather-sun { width: 30px; height: 30px; display: block; }
+    .mini-weather-temp {
+      font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: #191919;
+      line-height: 1;
+    }
+
+    /* TabBar mini */
+    .mini-tabbar {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .mini-tabbar span { width: 18px; height: 18px; background: rgba(0,0,0,0.08); border-radius: 4px; }
+    .mini-tabbar span.active { background: #191919; }
+    .comp-body { padding: 0; }
+    .comp-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 25px;
+      color: #191919;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .comp-body p {
+      font-size: 13px;
+      color: #191919;
+      line-height: 22px;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
 <body data-page="components/overview" data-root="../">
@@ -40,38 +282,122 @@
 
       <section class="ds-section">
         <div class="comp-grid">
-          <a class="comp-card" href="header.html"><div class="comp-thumb tone-nav">
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/nav_search@3x.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/nav_codescan@3x.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/nav_settings@3x.png" alt=""/>
-          </div><div class="comp-body"><h3>Header</h3><p>로고 · 액션 버튼 · 칩바 (104px sticky)</p></div></a>
-          <a class="comp-card" href="chip.html"><div class="comp-thumb" style="background:#fff;gap:6px">
-            <span style="display:inline-flex;align-items:center;justify-content:center;height:38px;padding:10px 16px;border-radius:40px;background:#191919;color:#fff;font-size:15px;font-weight:600;border:1px solid #191919;box-sizing:border-box">홈</span>
-            <span style="display:inline-flex;align-items:center;justify-content:center;height:38px;padding:10px 16px;border-radius:40px;background:#fff;color:#191919;font-size:15px;font-weight:600;border:1px solid rgba(0,0,0,0.14);box-sizing:border-box">지갑</span>
-          </div><div class="comp-body"><h3>Chip</h3><p>홈 / 지갑 전환용 캡슐 버튼</p></div></a>
-          <a class="comp-card" href="pay-strip.html"><div class="comp-thumb tone-pay">
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/home/pay_logo.png" alt=""/>
-            <span style="font-weight:700;font-size:15px;color:#191919">53,000원</span>
-          </div><div class="comp-body"><h3>PayStrip</h3><p>카카오페이 잔액·송금·결제 진입 스트립</p></div></a>
-          <a class="comp-card" href="service-shortcut.html"><div class="comp-thumb tone-svc">
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/home/svc_gift.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/home/svc_emoticon.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/home/svc_game.png" alt=""/>
-          </div><div class="comp-body"><h3>ServiceShortcut</h3><p>3페이지 스와이프 × 4×3 아이콘 그리드</p></div></a>
-          <a class="comp-card" href="home-ad.html"><div class="comp-thumb img" style="background-image:url('https://leche.github.io/moretab-design-system-web-publishing/images/home/ad_nike_golf.png')"></div><div class="comp-body"><h3>HomeAd</h3><p>AD 배지 · 히어로 이미지 · 제목 + CTA</p></div></a>
-          <a class="comp-card" href="game-card.html"><div class="comp-thumb img" style="background-image:url('https://leche.github.io/moretab-design-system-web-publishing/images/home/game_thumb_1.png')"></div><div class="comp-body"><h3>GameCard</h3><p>배너 + 가로 스크롤 썸네일 + 랭킹 통계</p></div></a>
-          <a class="comp-card" href="kakaonow.html"><div class="comp-thumb img" style="background-image:url('https://leche.github.io/moretab-design-system-web-publishing/images/home/kakaonow_1.png')"></div><div class="comp-body"><h3>KakaoNow</h3><p>2열 카드 그리드 (배경 이미지)</p></div></a>
-          <a class="comp-card" href="weather-card.html"><div class="comp-thumb tone-weather">
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/home/ico_weather_sun.svg" alt=""/>
-            <span style="font-size:28px;font-weight:400;color:#191919">18°</span>
-          </div><div class="comp-body"><h3>WeatherCard</h3><p>현재 위치 · 기온 · 미세먼지</p></div></a>
-          <a class="comp-card" href="tab-bar.html"><div class="comp-thumb tone-tab">
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/tab_friends@3x.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/tab_chat@3x.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/tab_openchat@3x.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/tab_shop@3x.png" alt=""/>
-            <img src="https://leche.github.io/moretab-design-system-web-publishing/icons/tab_more@3x.png" alt=""/>
-          </div><div class="comp-body"><h3>TabBar</h3><p>5탭 고정 내비게이션 (49px)</p></div></a>
+          <a class="comp-card" href="header.html">
+            <div class="comp-thumb">
+              <div class="mini-header">
+                <div class="mini-header-top">
+                  <span class="mini-header-title">더보기</span>
+                  <div class="mini-header-icons"><span></span><span></span><span></span></div>
+                </div>
+                <div class="mini-header-chips">
+                  <span class="active"></span>
+                  <span class="inactive"></span>
+                </div>
+              </div>
+            </div>
+            <div class="comp-body"><h3>Header</h3><p>로고 · 액션 버튼 · 칩바 (104px sticky)</p></div>
+          </a>
+          <a class="comp-card" href="chip.html">
+            <div class="comp-thumb">
+              <div class="mini-chip-row">
+                <span class="mini-chip active">홈</span>
+                <span class="mini-chip inactive">지갑</span>
+              </div>
+            </div>
+            <div class="comp-body"><h3>Chip</h3><p>홈 / 지갑 전환용 캡슐 버튼</p></div>
+          </a>
+          <a class="comp-card" href="pay-strip.html">
+            <div class="comp-thumb">
+              <div class="mini-pay">
+                <svg class="mini-pay-logo" viewBox="0 0 34 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M5.4287 0C2.43052 0 0 2.01939 0 4.51049C0 6.00544 0.877269 7.32857 2.22542 8.1493L1.58625 10.6601C1.52507 10.9007 1.78051 11.0923 1.97689 10.9529L4.74971 8.98448C4.97236 9.00758 5.19862 9.02087 5.4287 9.02087C8.42688 9.02087 10.8573 7.00148 10.8573 4.51049C10.8573 2.01939 8.42688 0 5.4287 0ZM15.6804 2.25585V6.54766C15.7833 6.56073 16.0409 6.58699 16.2856 6.58699C17.6248 6.58699 18.1399 5.62892 18.1399 4.11958C18.1399 2.79394 17.7922 1.9934 16.7234 1.9934C16.3757 1.9934 15.9894 2.09832 15.6804 2.25585ZM15.6814 7.88652V10.577H13.8014V0.654812H15.1277L15.3594 1.28474C15.7586 0.877933 16.3638 0.444768 17.3425 0.444768C19.1838 0.444768 20.0593 1.84918 20.0465 4.11972C20.0465 6.49528 18.6945 8.01769 16.763 8.01769C16.3895 8.01769 16.1062 7.99154 15.6814 7.88652ZM24.5263 5.83387V4.55675H23.6571C22.684 4.55675 22.191 4.90161 22.191 5.59121C22.191 6.1149 22.4635 6.37028 23.0214 6.37028C23.5403 6.37028 24.2019 6.1149 24.5263 5.83387ZM23.4484 3.3694H24.5252V3.13946C24.5252 2.37321 24.0841 2.01564 23.3186 2.01564C22.7348 2.01564 21.9824 2.18165 21.3726 2.47531L20.8537 1.22384C21.5283 0.764072 22.5662 0.444768 23.4874 0.444768C25.3036 0.444768 26.2896 1.38976 26.2896 3.19056V7.62213H24.9533L24.7588 7.03462C23.9932 7.58386 23.2927 7.81369 22.657 7.81369C21.2688 7.81369 20.4904 6.99635 20.4904 5.61704C20.4904 4.14837 21.5283 3.3694 23.4484 3.3694ZM31.2766 6.91217C30.6411 8.63092 29.8812 9.88201 28.7723 10.5771L27.6511 9.52816C28.2989 8.95948 28.7599 8.40348 29.1586 7.65783L26.7416 0.972394L28.548 0.479553L30.093 5.9012L31.6254 0.454271L33.4069 0.959803L31.2766 6.91217Z" fill="#191919"/>
+                </svg>
+                <span class="mini-pay-bar"></span>
+                <span class="mini-pay-actions">
+                  <span></span><span></span><span></span>
+                </span>
+              </div>
+            </div>
+            <div class="comp-body"><h3>PayStrip</h3><p>카카오페이 잔액·송금·결제 진입 스트립</p></div>
+          </a>
+          <a class="comp-card" href="service-shortcut.html">
+            <div class="comp-thumb">
+              <div class="mini-svc">
+                <div class="mini-svc-row"><span></span><span></span><span></span><span></span></div>
+                <div class="mini-svc-row"><span></span><span></span><span></span><span></span></div>
+              </div>
+            </div>
+            <div class="comp-body"><h3>ServiceShortcut</h3><p>3페이지 스와이프 × 4×3 아이콘 그리드</p></div>
+          </a>
+          <a class="comp-card" href="home-ad.html">
+            <div class="comp-thumb">
+              <div class="mini-ad">
+                <div class="mini-ad-hero"><span class="mini-ad-badge">AD</span></div>
+                <div class="mini-ad-body">
+                  <div class="mini-ad-titles"><span></span></div>
+                  <span class="mini-ad-cta"></span>
+                </div>
+              </div>
+            </div>
+            <div class="comp-body"><h3>HomeAd</h3><p>AD 배지 · 히어로 이미지 · 제목 + CTA</p></div>
+          </a>
+          <a class="comp-card" href="game-card.html">
+            <div class="comp-thumb">
+              <div class="mini-game">
+                <div class="mini-game-banner">
+                  <span class="mini-game-banner-icon"></span>
+                  <span class="mini-game-banner-text"></span>
+                </div>
+                <div class="mini-game-row">
+                  <span class="mini-game-item active"></span>
+                  <span class="mini-game-item"></span>
+                  <span class="mini-game-item"></span>
+                </div>
+              </div>
+            </div>
+            <div class="comp-body"><h3>GameCard</h3><p>배너 + 가로 스크롤 썸네일 + 랭킹 통계</p></div>
+          </a>
+          <a class="comp-card" href="kakaonow.html">
+            <div class="comp-thumb">
+              <div class="mini-now">
+                <span class="mini-now-cell active"></span>
+                <span class="mini-now-cell"></span>
+                <span class="mini-now-cell"></span>
+                <span class="mini-now-cell"></span>
+              </div>
+            </div>
+            <div class="comp-body"><h3>KakaoNow</h3><p>2열 카드 그리드 (배경 이미지)</p></div>
+          </a>
+          <a class="comp-card" href="weather-card.html">
+            <div class="comp-thumb">
+              <div class="mini-weather">
+                <svg class="mini-weather-sun" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                  <circle cx="16" cy="16" r="6.5" fill="#191919"/>
+                  <g stroke="#191919" stroke-width="1.8" stroke-linecap="round">
+                    <line x1="16" y1="3" x2="16" y2="6"/>
+                    <line x1="16" y1="26" x2="16" y2="29"/>
+                    <line x1="3" y1="16" x2="6" y2="16"/>
+                    <line x1="26" y1="16" x2="29" y2="16"/>
+                    <line x1="6" y1="6" x2="8" y2="8"/>
+                    <line x1="24" y1="24" x2="26" y2="26"/>
+                    <line x1="6" y1="26" x2="8" y2="24"/>
+                    <line x1="24" y1="8" x2="26" y2="6"/>
+                  </g>
+                </svg>
+                <span class="mini-weather-temp">18°</span>
+              </div>
+            </div>
+            <div class="comp-body"><h3>WeatherCard</h3><p>현재 위치 · 기온 · 미세먼지</p></div>
+          </a>
+          <a class="comp-card" href="tab-bar.html">
+            <div class="comp-thumb">
+              <div class="mini-tabbar">
+                <span></span><span></span><span></span><span></span>
+                <span class="active"></span>
+              </div>
+            </div>
+            <div class="comp-body"><h3>TabBar</h3><p>5탭 고정 내비게이션 (49px)</p></div>
+          </a>
         </div>
       </section>
     </div>
