@@ -279,7 +279,7 @@ body.is-no-sidebar .ds-footer {
 .ds-section-desc {
   font-size: 15px;
   color: var(--ds-text-sub);
-  margin-bottom: 20px;
+  margin-bottom: 56px;
   line-height: 1.65;
 }
 .ds-subsection {
@@ -366,15 +366,6 @@ body.is-no-sidebar .ds-footer {
   border-radius: 50%;
   background: #191919;
 }
-.ds-guide-list code {
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: #191919;
-  font-family: 'Pretendard', 'Helvetica Neue', Arial, sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-}
 
 @media (max-width: 720px) {
   .ds-guide-grid { grid-template-columns: 1fr; }
@@ -400,7 +391,7 @@ body.is-no-sidebar .ds-footer {
 }
 .ds-example-preview.is-mobile {
   padding: 24px;
-  min-height: 0;
+  min-height: 300px;
 }
 .ds-example-preview.is-dark {
   background: #191919;
@@ -468,15 +459,8 @@ body.is-no-sidebar .ds-footer {
 /* ==========================================================================
    Code blocks
    ========================================================================== */
-code, kbd, pre, samp {
+kbd, pre, samp {
   font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
-}
-code {
-  background: var(--ds-code-bg);
-  border-radius: 3px;
-  padding: 2px 6px;
-  font-size: 13px;
-  color: #2f7ff5;
 }
 pre {
   background: #f7f7f7;
@@ -576,7 +560,13 @@ pre code.hljs { background: transparent; padding: 0; white-space: inherit; overf
    ========================================================================== */
 .ds-hero {
   padding: 0 0 60px;
-  margin-bottom: 56px;
+}
+.ds-section--flush { margin-bottom: 0; }
+.ds-divider {
+  border: 0;
+  height: 1px;
+  background: var(--ds-border);
+  margin: 60px 0;
 }
 .ds-hero-eyebrow {
   font-size: 12px;

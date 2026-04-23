@@ -4,18 +4,68 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>App Shell — 더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="../assets/ds.css?v=22" />
-  <script defer src="../assets/ds.js?v=22"></script>
+  <link rel="stylesheet" href="../assets/ds.css?v=23" />
+  <script defer src="../assets/ds.js?v=23"></script>
   <style>
-    .shell-demo {
+    /* iPhone 17 Pro device frame (1206×2622 display resolution) */
+    .shell-device {
       width: 100%;
-      max-width: 380px;
+      max-width: 400px;
+      aspect-ratio: 1206 / 2622;
       margin: 0 auto;
-      background: #fff;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      border-radius: 12px;
-      overflow: hidden;
+      padding: 10px;
+      background: #1a1a1a;
+      border-radius: 54px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
       font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+      box-sizing: border-box;
+    }
+    .shell-device-screen {
+      height: 100%;
+      background: #fff;
+      border-radius: 44px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .shell-statusbar {
+      height: 54px;
+      position: relative;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .shell-dynamic-island {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 35px;
+      background: #000;
+      border-radius: 999px;
+    }
+    .shell-home-wrap {
+      padding: 8px 0 10px;
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .shell-home-indicator {
+      width: 134px;
+      height: 5px;
+      background: #191919;
+      border-radius: 999px;
+    }
+
+    .shell-demo {
+      background: #fff;
+      font-family: 'Pretendard','Helvetica Neue',Arial,sans-serif;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     .shell-zone {
       padding: 16px 20px;
@@ -38,6 +88,7 @@
       background: rgba(10, 115, 220, 0.03);
       min-height: 280px;
       padding: 20px;
+      flex: 1;
     }
     .shell-tabbar { background: rgba(10, 115, 220, 0.09); }
     .z-badge {
@@ -72,21 +123,31 @@
       <section class="ds-section">
         <h2 class="ds-section-title">Layout</h2>
         <p class="ds-section-desc">각 영역의 크기와 쌓임 순서입니다. 콘텐츠 영역의 상하 패딩은 자동으로 헤더·탭바 높이만큼 확보됩니다.</p>
-        <div class="shell-demo">
-          <div class="shell-zone shell-top">
-            <div class="label">.top <span class="z-badge">sticky · z:5</span></div>
-            .main-tab · 56px (로고 + 액션 3)
-          </div>
-          <div class="shell-zone shell-chip">
-            .chip-bar · 48px (홈 · 지갑)
-          </div>
-          <div class="shell-zone shell-content">
-            <div class="label">main.feed <span class="z-badge">flow</span></div>
-            <div style="margin-top:8px">.screen-home · padding 6 16 0 · flex column · gap 12</div>
-          </div>
-          <div class="shell-zone shell-tabbar">
-            <div class="label">.tab-bar <span class="z-badge">fixed bottom · z:10</span></div>
-            49px · 5 tabs
+        <div class="shell-device">
+          <div class="shell-device-screen">
+            <div class="shell-statusbar">
+              <div class="shell-dynamic-island" aria-hidden="true"></div>
+            </div>
+            <div class="shell-demo">
+              <div class="shell-zone shell-top">
+                <div class="label">.top <span class="z-badge">sticky · z:5</span></div>
+                .main-tab · 56px (로고 + 액션 3)
+              </div>
+              <div class="shell-zone shell-chip">
+                .chip-bar · 48px (홈 · 지갑)
+              </div>
+              <div class="shell-zone shell-content">
+                <div class="label">main.feed <span class="z-badge">flow</span></div>
+                <div style="margin-top:8px">.screen-home · padding 6 16 0 · flex column · gap 12</div>
+              </div>
+              <div class="shell-zone shell-tabbar">
+                <div class="label">.tab-bar <span class="z-badge">fixed bottom · z:10</span></div>
+                49px · 5 tabs
+              </div>
+            </div>
+            <div class="shell-home-wrap">
+              <div class="shell-home-indicator" aria-hidden="true"></div>
+            </div>
           </div>
         </div>
       </section>
