@@ -101,7 +101,8 @@
           <circle cx="22" cy="14" r="2.2" fill="#191919"/>
         </svg>
       </span>
-      <span class="ds-brand-wordmark">Moretab Design System</span>
+      <span class="ds-brand-wordmark ds-brand-wordmark--long">Moretab Design System</span>
+      <span class="ds-brand-wordmark ds-brand-wordmark--short" aria-hidden="true">MDS</span>
     </a>
     <nav class="ds-header-nav">
       ${topNav
@@ -109,6 +110,50 @@
           (n) =>
             `<a href="${root}${n.href}" class="${matchTop(n.id) ? 'is-active' : ''}"><span class="ds-header-nav-label">${n.label}</span></a>`
         )
+        .join('')}
+    </nav>
+    <button type="button" class="ds-header-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="ds-menu-overlay">
+      <span></span><span></span><span></span>
+    </button>
+  `;
+
+  // ----- Render Mobile Menu Overlay (full-screen LNB) ----------------------
+  // Build flat item list: each top nav as "section"; active section's sub items
+  // follow as flat "sub" entries (groups flattened per Figma 6835:*).
+  const flatItems = [];
+  topNav.forEach((n) => {
+    const isActive = matchTop(n.id);
+    flatItems.push({ type: 'section', href: root + n.href, label: n.label, active: isActive });
+    if (isActive) {
+      const subs = sideNavBySection[n.id];
+      if (subs) {
+        subs.forEach((g) => {
+          g.items.forEach((it) => {
+            flatItems.push({
+              type: 'sub',
+              href: root + it.href,
+              label: it.label,
+              active: it.id === currentPage,
+            });
+          });
+        });
+      }
+    }
+  });
+
+  const overlay = document.createElement('div');
+  overlay.id = 'ds-menu-overlay';
+  overlay.className = 'ds-menu-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.setAttribute('aria-label', '전체 메뉴');
+  overlay.innerHTML = `
+    <nav class="ds-menu-nav">
+      ${flatItems
+        .map((it) => {
+          const cls = ['menu-item', `is-${it.type}`];
+          if (it.active) cls.push('is-active');
+          return `<a href="${it.href}" class="${cls.join(' ')}">${it.label}</a>`;
+        })
         .join('')}
     </nav>
   `;
@@ -148,7 +193,113 @@
 
   // ----- Mount -------------------------------------------------------------
   if (sidebar) body.insertBefore(sidebar, body.firstChild);
+  body.insertBefore(overlay, body.firstChild);
   body.insertBefore(header, body.firstChild);
+
+  // ----- Mobile menu toggle ------------------------------------------------
+  const toggleBtn = header.querySelector('.ds-header-toggle');
+  // Sequenced motion: on OPEN wait for ds-main/header fade-out (320ms) then
+  // reveal LNB; on CLOSE hide LNB first, then fade ds-main/header back in.
+  const SEQ_DELAY = 320;
+  let pendingTimer = null;
+  function setMenuOpen(open) {
+    if (pendingTimer) {
+      clearTimeout(pendingTimer);
+      pendingTimer = null;
+    }
+    toggleBtn.classList.toggle('is-open', open);
+    toggleBtn.setAttribute('aria-expanded', String(open));
+    toggleBtn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+
+    if (open) {
+      body.classList.add('is-menu-open');
+      pendingTimer = setTimeout(() => {
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        pendingTimer = null;
+      }, SEQ_DELAY);
+    } else {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      pendingTimer = setTimeout(() => {
+        body.classList.remove('is-menu-open');
+        pendingTimer = null;
+      }, SEQ_DELAY);
+    }
+  }
+  toggleBtn.addEventListener('click', () => {
+    setMenuOpen(!toggleBtn.classList.contains('is-open'));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggleBtn.classList.contains('is-open')) {
+      setMenuOpen(false);
+    }
+  });
+
+  // Menu link click: close LNB, wait for it to fully disappear, then navigate
+  // (next page's .ds-main fades in via CSS animation on load).
+  const NAV_DELAY_MS = 400; // matches .ds-menu-overlay transition duration
+  overlay.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const href = a.getAttribute('href');
+      // Skip hash links / external protocols
+      if (!href || href.startsWith('#') || /^[a-z]+:/i.test(href) && !/^https?:\/\//i.test(href)) {
+        setMenuOpen(false);
+        return;
+      }
+      // Only delay-navigate if it's a same-origin link
+      const isSameOrigin = !href.startsWith('http') || href.startsWith(location.origin);
+      if (!isSameOrigin) {
+        setMenuOpen(false);
+        return;
+      }
+      e.preventDefault();
+      body.classList.add('is-navigating');
+      setMenuOpen(false);
+      setTimeout(() => {
+        window.location.href = href;
+      }, NAV_DELAY_MS);
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 640 && toggleBtn.classList.contains('is-open')) {
+      setMenuOpen(false);
+    }
+  });
+
+  // ----- Footer ------------------------------------------------------------
+  const footer = document.createElement('footer');
+  footer.className = 'ds-footer';
+  footer.innerHTML = `
+    <div class="ds-footer-inner">
+      <div class="ds-footer-brand">
+        <div class="ds-footer-text">
+          <span class="ds-footer-title">Moretab Design System</span>
+          <span class="ds-footer-sub">카카오톡 더보기탭 지면의 디자인 토큰 · 컴포넌트 · 패턴</span>
+        </div>
+      </div>
+      <div class="ds-footer-meta">
+        <span class="ds-footer-meta-item"><span class="ds-footer-meta-label">Released</span><span class="ds-footer-meta-value">2026.04.21</span></span>
+        <span class="ds-footer-meta-item"><span class="ds-footer-meta-label">Platform</span><span class="ds-footer-meta-value">iOS / Android</span></span>
+        <span class="ds-footer-meta-item ds-footer-copy">© Kakao Corp.</span>
+      </div>
+    </div>
+  `;
+  body.appendChild(footer);
+
+  // ----- Auto-wrap wide tables for mobile scroll ---------------------------
+  document.querySelectorAll('table.ds-table').forEach((table) => {
+    if (
+      !table.parentElement ||
+      table.parentElement.classList.contains('ds-table-scroll')
+    )
+      return;
+    const wrap = document.createElement('div');
+    wrap.className = 'ds-table-scroll';
+    table.parentNode.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  });
 
   // ----- Example tabs (for component pages) --------------------------------
   document.querySelectorAll('.ds-example').forEach((ex) => {

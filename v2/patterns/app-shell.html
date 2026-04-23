@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>App Shell — 더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="../assets/ds.css?v=23" />
-  <script defer src="../assets/ds.js?v=23"></script>
+  <link rel="stylesheet" href="../assets/ds.css?v=24" />
+  <script defer src="../assets/ds.js?v=24"></script>
   <style>
     /* iPhone 17 Pro device frame (1206×2622 display resolution) */
     .shell-device {
@@ -37,11 +37,11 @@
     }
     .shell-dynamic-island {
       position: absolute;
-      top: 11px;
+      top: 13px;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
-      height: 35px;
+      width: 100px;
+      height: 28px;
       background: #000;
       border-radius: 999px;
     }
@@ -66,6 +66,9 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
+    }
+    @media (max-width: 640px) {
+      .shell-device { box-shadow: none; }
     }
     .shell-zone {
       padding: 16px 20px;
