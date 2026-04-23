@@ -288,6 +288,34 @@
   `;
   body.appendChild(footer);
 
+  // ----- iOS PWA standalone: keep internal navigation in-app --------------
+  // Known iOS Safari behavior: tapping <a href> from a home-screen web app
+  // can open the link in Safari (browser chrome) instead of staying in
+  // standalone. Intercept same-origin non-blank links and use location.href
+  // which is guaranteed to stay in standalone.
+  const isStandalone =
+    (typeof window.navigator.standalone === 'boolean' && window.navigator.standalone) ||
+    window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) {
+    document.addEventListener(
+      'click',
+      (e) => {
+        const a = e.target.closest && e.target.closest('a');
+        if (!a) return;
+        // LNB overlay links have their own handler (smooth transition).
+        if (a.closest('.ds-menu-overlay')) return;
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('#')) return;
+        if (a.target === '_blank') return;
+        const url = new URL(a.href, location.href);
+        if (url.origin !== location.origin) return; // external
+        e.preventDefault();
+        window.location.href = url.href;
+      },
+      true
+    );
+  }
+
   // ----- Auto-wrap wide tables for mobile scroll ---------------------------
   document.querySelectorAll('table.ds-table').forEach((table) => {
     if (

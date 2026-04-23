@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>Components — 더보기탭 디자인 시스템</title>
-  <link rel="stylesheet" href="../assets/ds.css?v=24" />
-  <script defer src="../assets/ds.js?v=24"></script>
+  <link rel="stylesheet" href="../assets/ds.css?v=25" />
+  <script defer src="../assets/ds.js?v=25"></script>
   <style>
     .comp-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px 16px; }
     .comp-card {
@@ -197,8 +200,15 @@
       display: flex;
       gap: 8px;
       padding: 8px 10px 10px;
+      overflow: hidden;
     }
-    .mini-game-item { flex: 1; aspect-ratio: 1; background: rgba(0,0,0,0.08); border-radius: 8px; }
+    .mini-game-item {
+      width: 70px;
+      height: 70px;
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.08);
+      border-radius: 8px;
+    }
     .mini-game-item.active { background: #191919; }
 
     /* KakaoNow mini — Figma-synced (6818:88): 2×2 fixed 50×60 white cells */
